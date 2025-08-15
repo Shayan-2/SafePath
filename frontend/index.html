@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafePath AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>SafePath AI</h1>
+        <p>Find the safest path in Toronto based on crime data and lightning.</p>
+    </header>
+    <main>
+        <section id="input-section">
+            <h2>Get Safe Directions</h2>
+            <form id="path-form">
+                <label for="start-location">Start Location:</label>
+                <input type="text" id="start-location" required>
+                
+                <label for="end-location">End Location:</label>
+                <input type="text" id="end-location" required>
+                
+                <button type="submit">Find Safe Path</button>
+            </form>
+        </section>
+        <section id="results-section">
+            <h2>Safe Path Results</h2>
+            <div id="results"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 SafePath AI. All rights reserved.</p>
+    </footer>
+    <script src="js/app.js"></script>
+</body>
+</html>
