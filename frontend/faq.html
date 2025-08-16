@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="app">
-    <!-- Header -->
+
     <header>
       <div class="brand">
         <div class="logo" aria-hidden="true">🚦</div>
@@ -28,15 +28,28 @@
       </nav>
     </header>
 
-    <!-- Main Section -->
-    <main class="main">
+    <main class="main-faq">
+
+      <div class="accent-box left-box" style="top:50px;"></div>
+      <div class="accent-box left-box" style="top:300px;"></div>
+      
+      <div class="accent-box left-box" style="top:50px;"></div>
+      <div class="accent-box left-box" style="top:300px;"></div>
+      <div class="accent-circle"></div>
+      <div class="accent-triangle"></div>
+      
+      <div class="accent-box right-box" style="top:100px;"></div>
+      <div class="accent-box right-box" style="top:350px;"></div>
+      <div class="accent-circle right"></div>
+      <div class="accent-triangle right"></div>
+
       <section class="faq-panel">
         <h2>Frequently Asked Questions</h2>
 
         <div class="faq-item">
           <button class="faq-question">How does SafePath AI calculate safe routes?</button>
           <div class="faq-answer">
-            <p>Our system uses real-time crime data, lighting conditions, and community reports to calculate the safest possible routes for your journey.</p>
+            <p>Our system uses past police crime data, lighting conditions, and community reports to calculate the safest possible routes for your journey.</p>
           </div>
         </div>
 
@@ -48,9 +61,16 @@
         </div>
 
         <div class="faq-item">
-          <button class="faq-question">Can I use SafePath AI for biking or walking?</button>
+          <button class="faq-question">Can I use SafePath AI for biking, driving, or walking?</button>
           <div class="faq-answer">
             <p>Absolutely! Our routes are optimized for walking, biking, and other pedestrian travel.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">Is SafePath AI free to use?</button>
+          <div class="faq-answer">
+            <p>Yes, the basic route-finding functionality is free. Premium features may be added in the future</p>
           </div>
         </div>
 
@@ -61,9 +81,11 @@
           </div>
         </div>
       </section>
+
+      <div class="accent-box right-box" style="top:100px;"></div>
+      <div class="accent-box right-box" style="top:350px;"></div>
     </main>
 
-    <!-- Footer / Status Bar -->
     <div class="statusbar">
       <div class="metrics">
         <div class="pill">© 2025 SafePath AI</div>
@@ -73,7 +95,6 @@
     </div>
   </div>
 
-  <!-- JS for FAQ toggle -->
   <script>
     const questions = document.querySelectorAll('.faq-question');
     questions.forEach(q => {
@@ -85,4 +106,5 @@
   </script>
 </body>
 </html>
+
 
