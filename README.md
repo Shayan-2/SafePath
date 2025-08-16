@@ -1,6 +1,6 @@
 # SafePath
 
-SafePath helps users find the safest route in Toronto by combining Google Maps directions with real police crime data.
+SafePath helps users find the safest route in Toronto by combining Leaflet Javacript Library for interactive maps with real police crime data.
 
 ## Features
 
