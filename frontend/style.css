@@ -1,3 +1,7 @@
+/* ==========================================================
+    Style.css: Navigation Bar
+    =========================================================*/
+
 header {
   display: flex;
   align-items: center;
@@ -25,12 +29,14 @@ header {
 }
 
 .nav-bar a:hover {
-  background: rgba(68,208,123,0.2); /* subtle hover effect */
+  background: rgba(68,208,123,0.2); 
 }
 
 
 
-
+/* ==========================================================
+    Style.css: Home Page/Main Application
+    =========================================================*/
 :root {
   --bg: #0b1020;
   --bg2: #141a2e;
