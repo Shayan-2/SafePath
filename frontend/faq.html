@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAQ - SafePath AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🚦</div>
+        <div>
+          <h1>SafePath AI</h1>
+          <span>Toronto’s safer route finder</span>
+        </div>
+      </div>
+
+      <nav class="nav-bar">
+        <a href="index.html">Home</a>
+        <a href="about.html">About SafePath AI</a>
+        <a href="creators.html">Creators</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="faq.html" class="active">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-ghost">Reset</button>
+        <button class="btn-ghost">Use My Location</button>
+      </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="main">
+      <section class="faq-panel">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <button class="faq-question">How does SafePath AI calculate safe routes?</button>
+          <div class="faq-answer">
+            <p>Our system uses real-time crime data, lighting conditions, and community reports to calculate the safest possible routes for your journey.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">Is my location data safe?</button>
+          <div class="faq-answer">
+            <p>Yes! Your location data is used solely for route calculation and is not stored or shared.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">Can I use SafePath AI for biking or walking?</button>
+          <div class="faq-answer">
+            <p>Absolutely! Our routes are optimized for walking, biking, and other pedestrian travel.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">Does SafePath AI work outside Toronto?</button>
+          <div class="faq-answer">
+            <p>Currently, our system is optimized for Toronto, but we plan to expand to other cities soon.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer / Status Bar -->
+    <div class="statusbar">
+      <div class="metrics">
+        <div class="pill">© 2025 SafePath AI</div>
+        <div class="pill">Toronto, ON</div>
+      </div>
+      <div class="pill">Making Every Path Safer</div>
+    </div>
+  </div>
+
+  <!-- JS for FAQ toggle -->
+  <script>
+    const questions = document.querySelectorAll('.faq-question');
+    questions.forEach(q => {
+      q.addEventListener('click', () => {
+        const answer = q.nextElementSibling;
+        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+  </script>
+</body>
+</html>
+
