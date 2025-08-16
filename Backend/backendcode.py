@@ -135,6 +135,8 @@ def route_safety_score(route, crime_df):
                 offence = str(crime.get("OFFENCE", ""))
 
                 # Accumulate score and mark crime as processed for this route
+                # Removed crime_description and reasons.append(crime_description)
+
                 if "Shooting" in offence and "Assault" in category:
                     score += CRIME_WEIGHTS.get("Shooting", CRIME_WEIGHTS.get("Assault", 1)) * weight_factor
                 else:
@@ -195,7 +197,7 @@ def find_safest_route(start_addr, end_addr, mode="driving"):
     transformed_routes.sort(key=lambda x: x["score"], reverse=True)
 
     # Return top N safest routes, or all if less than N
-    return transformed_routes[:3] # Return top 3 safest routes
+    return transformed_routes[:3]
 
 @app.route('/safepath', methods=['POST'])
 def get_safest_path():

@@ -12,7 +12,6 @@ const miniStats = document.getElementById('miniStats');
 const scoreDisplay = miniStats.querySelector('.score');
 const estimatedTimeDisplay = miniStats.querySelector('p');
 const distancePill = document.querySelector('.metrics .pill:first-child');
-const alertsPill = document.querySelector('.metrics .pill:last-child');
 const statusMessage = document.getElementById('statusMessage');
 const scoreInfoIcon = document.getElementById('scoreInfoIcon');
 
@@ -86,7 +85,6 @@ function updateSelectedRoute(selectedIndex) {
     scoreDisplay.dataset.score = `${safetyScore.toFixed(0)}`; // Display as raw score, no percentage
     estimatedTimeDisplay.textContent = `Estimated time: ${Math.round(totalDuration / 60)} mins`;
     distancePill.textContent = `Distance: ${(totalDistance / 1000).toFixed(1)} km`;
-    alertsPill.textContent = `Alerts: ${safetyScore.toFixed(0)}`; // Display the actual safety score, rounded
 
     // Update the conic-gradient fill for the score circle
     scoreDisplay.style.setProperty('--score', `${safetyScore}%`);
@@ -124,7 +122,6 @@ function resetUIState() {
     scoreDisplay.dataset.score = '0'; // Reset score to 0
     estimatedTimeDisplay.textContent = 'Estimated time: -- mins';
     distancePill.textContent = 'Distance: -- km';
-    alertsPill.textContent = 'Alerts: --';
     statusMessage.textContent = 'Enter origin and destination';
     routesList.innerHTML = ''; // Clear route list
 
@@ -341,7 +338,7 @@ async function fetchAutocompleteSuggestions(inputElement, datalistElement) {
     try {
         const response = await fetch(`http://127.0.0.1:5000/autocomplete?q=${encodeURIComponent(query)}`);
         const suggestions = await response.json();
-
+        
         datalistElement.innerHTML = ''; // Clear previous suggestions
         suggestions.forEach(suggestion => {
             const option = document.createElement('option');
