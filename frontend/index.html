@@ -1,37 +1,80 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafePath AI</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SafePath AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 </head>
 <body>
+  <div class="app">
     <header>
-        <h1>SafePath AI</h1>
-        <p>Find the safest path in Toronto based on crime data and lightning.</p>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🚦</div>
+        <div>
+          <h1>SafePath AI</h1>
+          <span>Toronto’s safer route finder</span>
+        </div>
+      </div>
+
+      <nav class="nav-bar">
+        <a href="#">Home</a>
+        <a href="#">About SafeRoute AI</a>
+        <a href="#">Our Story</a>
+        <a href="#">Contact Us</a>
+        <a href="#">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-ghost" id="resetBtn">Reset</button>
+        <button class="btn-ghost" id="locateBtn">Use My Location</button>
+      </div>
     </header>
-    <main>
-        <section id="input-section">
-            <h2>Get Safe Directions</h2>
-            <form id="path-form">
-                <label for="start-location">Start Location:</label>
-                <input type="text" id="start-location" required>
-                
-                <label for="end-location">End Location:</label>
-                <input type="text" id="end-location" required>
-                
-                <button type="submit">Find Safe Path</button>
-            </form>
-        </section>
-        <section id="results-section">
-            <h2>Safe Path Results</h2>
-            <div id="results"></div>
-        </section>
+
+    <main class="main">
+      <aside class="panel sidebar">
+        <div class="section-title">Route Planner</div>
+        <div class="field">
+          <label for="origin">Origin</label>
+          <input type="text" id="origin" placeholder="Enter start location">
+        </div>
+        <div class="field">
+          <label for="destination">Destination</label>
+          <input type="text" id="destination" placeholder="Enter destination">
+        </div>
+
+        <div class="section-title">Filters</div>
+        <div class="filters">
+          <div class="check"><input type="checkbox" id="lowCrime"><label for="lowCrime">Low Crime Areas</label></div>
+          <div class="check"><input type="checkbox" id="wellLit"><label for="wellLit">Well Lit Areas</label></div>
+        </div>
+
+        <div class="cta">
+          <button class="btn-primary" id="findPathBtn">Find Safe Path</button>
+        </div>
+      </aside>
+
+      <section class="panel map-wrap">
+        <div id="map"></div>
+        <div class="floating-card" id="miniStats">
+          <h3>Safety Score</h3>
+          <div class="score" data-score="75%"></div>
+          <p>Estimated time: 15 mins</p>
+        </div>
+      </section>
     </main>
-    <footer>
-        <p>&copy; 2023 SafePath AI. All rights reserved.</p>
-    </footer>
-    <script src="js/app.js"></script>
+
+    <div class="statusbar">
+      <div class="metrics">
+        <div class="pill">Distance: 3 km</div>
+        <div class="pill">Alerts: 0</div>
+      </div>
+      <div class="pill">Route Ready</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
