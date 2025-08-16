@@ -1,3 +1,36 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(10px);
+  gap: 20px; /* add spacing */
+}
+
+.nav-bar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-bar a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.nav-bar a:hover {
+  background: rgba(68,208,123,0.2); /* subtle hover effect */
+}
+
+
+
+
 :root {
   --bg: #0b1020;
   --bg2: #141a2e;
