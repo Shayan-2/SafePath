@@ -7,12 +7,14 @@ import pandas as pd
 import requests
 # from geopy.distance import geodesic # Removed geodesic import
 import math
+import numpy as np # Import numpy
 
 app = Flask(__name__)
 CORS(app) # Enable CORS for your app
 
 API_KEY = "AIzaSyBCFHs1qD4zALdRQZjjz0ZD00s2vjpK4n8"  # Replace with your actual key
 DATA_FOLDER = os.path.join(os.path.dirname(__file__), "Data")
+SCORE_SCALING_FACTOR = 20 # Tune this to adjust how quickly safety score drops with risk (higher factor = slower drop)
 
 # Define weights for different crime categories (example weights, can be adjusted)
 CRIME_WEIGHTS = {
@@ -59,8 +61,8 @@ def geocode_address(address):
     else:
         raise ValueError(f"Could not geocode address: {address}. Status: {data['status']}")
 
-def get_routes(start, end):
-    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={start}&destination={end}&key={API_KEY}&alternatives=true"
+def get_routes(start, end, mode="driving"):
+    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={start}&destination={end}&key={API_KEY}&alternatives=true&mode={mode}"
     response = requests.get(url)
     data = response.json()
     return data.get("routes", [])
@@ -98,14 +100,24 @@ def route_safety_score(route, crime_df):
     
     score = 0
     crime_df_filtered = crime_df.dropna(subset=['LAT_WGS84', 'LONG_WGS84'])
+    
+    # Use a set to store indices of crimes already processed for this route
+    processed_crime_indices = set()
 
-    for _, crime in crime_df_filtered.iterrows():
-        crime_loc = (crime['LAT_WGS84'], crime['LONG_WGS84'])
-        for pt in points:
+    # Iterate through each point on the route
+    for pt_index, pt in enumerate(points):
+        # For each point, iterate through all crime incidents
+        for crime_idx, crime in crime_df_filtered.iterrows():
+            # Skip if this crime has already been processed for this route
+            if crime_idx in processed_crime_indices:
+                continue
+
+            crime_loc = (crime['LAT_WGS84'], crime['LONG_WGS84'])
+            
             # Validate pt and crime_loc before passing to haversine_distance
             if not (isinstance(pt, (list, tuple)) and len(pt) == 2 and
                     isinstance(pt[0], (int, float)) and isinstance(pt[1], (int, float))):
-                print(f"Warning: Invalid route point format encountered: {pt}. Skipping.")
+                # print(f"Warning: Invalid route point format encountered: {pt}. Skipping.") # Already printed above
                 continue
 
             if not (isinstance(crime_loc, (list, tuple)) and len(crime_loc) == 2 and
@@ -114,7 +126,7 @@ def route_safety_score(route, crime_df):
                 continue
 
             distance = haversine_distance(pt[0], pt[1], crime_loc[0], crime_loc[1]) # Used Haversine
-            if distance < 0.5:  # Still consider crimes within 0.5 km radius
+            if distance < 0.5:  # Consider crimes within 0.5 km radius
                 # Apply a linear decay for impact based on distance
                 weight_factor = 1 - (distance / 0.5)  # 0.5 km is the max effective radius
                 
@@ -122,30 +134,68 @@ def route_safety_score(route, crime_df):
                 category = str(crime.get("MCI_CATEGORY", "Other"))
                 offence = str(crime.get("OFFENCE", ""))
 
-                # Specific handling for "Shooting" within "Assault" category if needed
+                # Accumulate score and mark crime as processed for this route
                 if "Shooting" in offence and "Assault" in category:
                     score += CRIME_WEIGHTS.get("Shooting", CRIME_WEIGHTS.get("Assault", 1)) * weight_factor
                 else:
                     score += CRIME_WEIGHTS.get(category, 1) * weight_factor
-                break
+                
+                processed_crime_indices.add(crime_idx) # Mark this crime as processed for this route
+                # No break here! Continue checking other crimes against this point and other points.
 
     return score
 
-def find_safest_route(start_addr, end_addr):
+def find_safest_route(start_addr, end_addr, mode="driving"):
     start = geocode_address(start_addr)
     end = geocode_address(end_addr)
     start_str = f"{start[0]},{start[1]}"
     end_str = f"{end[0]},{end[1]}"
-    routes = get_routes(start_str, end_str)
+    routes = get_routes(start_str, end_str, mode)
 
-    best_route = None
-    best_score = float('inf')
+    scored_routes = []
     for route in routes:
-        score = route_safety_score(route, CRIME_DF)  # Use pre-loaded CRIME_DF
-        if score < best_score:
-            best_score = score
-            best_route = route
-    return best_route, best_score
+        score = route_safety_score(route, CRIME_DF)
+        print(f"Raw risk score for route: {score}") # Debug print
+        scored_routes.append({"route": route, "score": score})
+
+    # Sort routes by raw risk score (lower score is safer initially)
+    scored_routes.sort(key=lambda x: x["score"])
+
+    # Transform raw risk scores to absolute safety scores (0-100 scale, higher is safer)
+    transformed_routes = []
+
+    if not scored_routes:
+        return []
+
+    # Recalculate min/max raw scores after all routes are scored
+    # (This is important if a route had 0 score before and now has a non-zero one)
+    min_raw_score = scored_routes[0]["score"] 
+    max_raw_score = scored_routes[-1]["score"] 
+
+    score_range = max_raw_score - min_raw_score
+
+    for sr in scored_routes:
+        raw_risk_score = sr["score"]
+        
+        if raw_risk_score == 0: # Perfectly safe route
+            safety_score = 100
+        elif score_range == 0: # All routes have the same non-zero raw risk score
+            safety_score = 1 # Indicate some risk if all are equally risky
+        else:
+            # Normalize risk to 0-1, then invert to get safety (0=most risk, 1=least risk)
+            normalized_risk = (raw_risk_score - min_raw_score) / score_range
+            safety_score = 100 * (1 - normalized_risk) # Scale to 0-100
+            
+            if safety_score < 1: # Ensure minimum safety score is 1 for risky routes
+                safety_score = 1
+        
+        transformed_routes.append({"route": sr["route"], "score": round(safety_score, 0)})
+    
+    # Re-sort by transformed safety score (now highest is safest)
+    transformed_routes.sort(key=lambda x: x["score"], reverse=True)
+
+    # Return top N safest routes, or all if less than N
+    return transformed_routes[:3] # Return top 3 safest routes
 
 @app.route('/safepath', methods=['POST'])
 def get_safest_path():
@@ -153,17 +203,16 @@ def get_safest_path():
     print(f"Received data for /safepath: {data}")
     start_address = data.get('start_address')
     end_address = data.get('end_address')
+    commute_mode = data.get('commute_mode', 'driving') # Default to driving
 
     if not start_address or not end_address:
         return jsonify({"error": "Please provide both start_address and end_address"}), 400
 
     try:
-        route, score = find_safest_route(start_address, end_address)
-        if route:
-            return jsonify({
-                "safest_route": route,
-                "safety_score": score
-            })
+        safest_routes_info = find_safest_route(start_address, end_address, commute_mode)
+        if safest_routes_info:
+            # Return a list of routes and their scores
+            return jsonify({"safest_routes": safest_routes_info})
         else:
             return jsonify({"message": "No route found"}), 404
     except Exception as e:
@@ -175,9 +224,10 @@ def get_safest_path():
 
 @app.route('/crime_data', methods=['GET'])
 def get_crime_data():
-    # For now, return a sample of the loaded crime data
-    # In a real application, you might want to filter this by location/type
-    return jsonify(CRIME_DF.sample(100).to_dict(orient='records'))
+    # Convert DataFrame to a list of dictionaries, replacing all NaN values with None
+    # This ensures proper JSON serialization (NaN is not valid JSON, null is)
+    crime_data_for_json = CRIME_DF.sample(100).replace({np.nan: None}).to_dict(orient='records')
+    return jsonify(crime_data_for_json)
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():

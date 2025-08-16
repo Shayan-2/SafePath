@@ -45,11 +45,28 @@
           <input type="text" id="destination" placeholder="Enter destination">
         </div>
 
-        <div class="section-title">Filters</div>
-        <div class="filters">
-          <div class="check"><input type="checkbox" id="lowCrime"><label for="lowCrime">Low Crime Areas</label></div>
-          <div class="check"><input type="checkbox" id="wellLit"><label for="wellLit">Well Lit Areas</label></div>
+        <div class="section-title">Commute Mode</div>
+        <div class="commute-modes">
+          <div class="radio-option">
+            <input type="radio" id="modeDriving" name="commuteMode" value="driving" checked>
+            <label for="modeDriving">Driving</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="modeBicycling" name="commuteMode" value="bicycling">
+            <label for="modeBicycling">Bicycling</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="modeWalking" name="commuteMode" value="walking">
+            <label for="modeWalking">Walking</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="modeTransit" name="commuteMode" value="transit">
+            <label for="modeTransit">Transit</label>
+          </div>
         </div>
+
+        <div class="section-title">Alternative Routes</div>
+        <div class="routes-list" id="routesList"></div>
 
         <div class="cta">
           <button class="btn-primary" id="findPathBtn">Find Safe Path</button>
@@ -59,19 +76,19 @@
       <section class="panel map-wrap">
         <div id="map"></div>
         <div class="floating-card" id="miniStats">
-          <h3>Safety Score</h3>
-          <div class="score" data-score="75%"></div>
-          <p>Estimated time: 15 mins</p>
+          <h3>Safety Score <span class="info-icon" id="scoreInfoIcon">ⓘ</span></h3>
+          <div class="score" data-score="0"></div>
+          <p>Estimated time: -- mins</p>
         </div>
       </section>
     </main>
 
     <div class="statusbar">
       <div class="metrics">
-        <div class="pill">Distance: 3 km</div>
-        <div class="pill">Alerts: 0</div>
+        <div class="pill">Distance: -- km</div>
+        <div class="pill">Alerts: --</div>
       </div>
-      <div class="pill">Route Ready</div>
+      <div class="pill" id="statusMessage">Enter origin and destination</div>
     </div>
   </div>
 
