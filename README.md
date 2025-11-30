@@ -39,3 +39,4 @@ SafePath helps users find the safest route in Toronto by combining Leaflet Javac
 - Muhammad Shayan Khattak
 - Sarim Khan
 - Daniel Zhang
+- Aadi Arya
